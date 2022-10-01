@@ -132,7 +132,7 @@
     
     <button value="agregar" class="btn" id="btn_agregar">Agregar</button>
     </section>
-    <section name="form_ABM" id="form_ABM">
+    <section name="form_ABM" class="form_ABM hidden" id="form_ABM">
         <div>
             <h1>Formulario ABM</h1>
             <div class="group">
@@ -392,6 +392,15 @@
                 h_asesinatos.style.display = 'none';
                 personasMap(filter.value);
             }
+        });
+
+        btn_agregar.addEventListener("click", (e) => {
+            form_datos.style.display = 'none';
+            form_abm.style.display = 'block';
+        });
+        can_btn.addEventListener("click", (e) => {
+            form_datos.style.display = 'block';
+            form_abm.style.display = 'none';
         });
     </script>
 </body>
