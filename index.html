@@ -5,17 +5,137 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        .hidden {
-            display: none;
-        }
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+        h2,h1{
+            color: #0d2455;
+            margin: 10px 30px;
+            text-align: center;
+        }
+        div.filtrado, div.promedio_edad{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 5px;
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        input#txt_edadProm {
+            width: 20%;
+            font-weight: 700;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #eeeff3;
+            text-align: center;
+            color: #039;
+        }
+        .boton {
+            width: 15%;
+            background-color: #b9c9fe;
+            color: #039;
+            border: none;
+            border-radius: 4px;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 5px 2px;
+            margin: 2px;
+        }
+        td {
+            padding: 8px;
+            background: #e8edff;
+            border-bottom: 1px solid #fff;
+            color: #669;
+            border: 4px solid #fff;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        tr:hover td {
+            background: #d0dafd;
+            color: #339; 
+            border: 4px solid #fff;
+        }
+        table {
+            width: 60%;
+            text-align: center;
+            border-collapse: collapse;
+            margin: 10px;
+        }
+        .mostrar_cols {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            flex-direction: row;
+            align-items: center;
+            font-weight: 700;
+            padding: 6px;
+        }
+        th{
+            width: 96%;
+            background-color: #b9c9fe;
+            color: #039;
+            border: none;
+            border-radius: 4px;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 6px 6px;
+        }
+        select {
+            background-color: #b9c9fe;
+            color: #2b52a0;
+            padding: 4px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        div.btn_group > button{
+            width: 25%;
+            margin: 2px;
+        }
+
+        body {
+            background-color: #00003b;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background-color: #ff9900ff;
+            width: 80%;
+            min-width: 600px;
+            box-shadow: 0 0 2px 2px #5cecffff;
+            border-radius: 12px;
+        }
+        div.group{
+            margin: 5px;
+        }
+        .hidden {
+            display: none;
+        }
     </style>
     <script type="text/javascript">
+
         const initialData = '[{"id":1, "nombre":"Clark", "apellido":"Kent", "edad":45, "alterego":"Superman", "ciudad":"Metropolis", "publicado":2002},{"id":2, "nombre":"Bruce", "apellido":"Wayne", "edad":35, "alterego":"Batman", "ciudad":"Gotica", "publicado":20012},{"id":3, "nombre":"Bart", "apellido":"Alen", "edad":30, "alterego":"Flash", "ciudad":"Central", "publicado":2017},{"id":4, "nombre":"Lex", "apellido":"Luthor", "edad":18, "enemigo":"Superman", "robos":500, "asesinatos":7},{"id":5, "nombre":"Harvey", "apellido":"Dent", "edad":20, "enemigo":"Batman", "robos":750, "asesinatos":2},{"id":666, "nombre":"Celina", "apellido":"kyle", "edad":23, "enemigo":"Batman", "robos":25, "asesinatos":1}]';
+        let personas = [];
+        let idMax;
+        let sumEdad;
+        let cantPers;
+        let filas;
+
+        //CLASES
         class Persona {
 
             constructor(id,nombre,apellido,edad){
@@ -32,7 +152,7 @@
                 super(id,nombre,apellido,edad);
                 this.alterego=alterego ? alterego : "-";
                 this.ciudad=ciudad ? ciudad : "-";
-                this.publicado= parseInt(publicado > 1940 ? publicado : 1941);
+                this.publicado= parseInt(!isNaN(publicado) && publicado > 1940 ? publicado : 1941);
             }
         }
 
@@ -40,165 +160,161 @@
             constructor(id,nombre,apellido,edad,enemigo,robos,asesinatos){
                 super(id,nombre,apellido,edad);
                 this.enemigo=enemigo ? enemigo : "-";
-                this.robos= parseInt(robos > 0 ? robos : 1);
-                this.asesinatos= parseInt(asesinatos > 0 ? asesinatos : 1);
+                this.robos= parseInt(!isNaN(robos) && robos > 0 ? robos : 1);
+                this.asesinatos= parseInt(!isNaN(asesinatos) && asesinatos > 0 ? asesinatos : 1);
             }
         }
         
-        let personas = [];
     </script>
     
     <title>Primer Parcial Laboratorio 3 2022 Montagut</title>
 </head>
 <body>
-    <section name="form_datos" id="form_datos">
-        <h1>Form Datos</h1>
-        <section class="filtrado">
-            <label>Filtrar por:</label>
-            <select name="filtro" id="filtro">
-                <option value="todos" selected>Todos</option>
-                <option value="heroe">Heroe</option>
-                <option value="villano">Villano</option>            
-            </select>
-        </section>
-        <section class="promedio_edad">
-            <label for="txt_edadProm">Calcular edad promedio:</label>
-            <input type="number" readonly name="txt_edadProm" id="txt_edadProm">
-            <button value="Calcular" class="button btn_calcular">Calcular</button>
-        </section>
-        <section class="mostrar_cols">
-            <h2>Mostrar columnas</h2>
-            <div class="mostrar_fila">
-                <div class="mostrar_id">
-                    <input type="checkbox" checked name="id" id="p_id">
-                    <label for="p_id">ID</label>
-                </div>
-                <div class="mostrar_nombre">
-                    <input type="checkbox" checked name="nombre" id="p_nombre">
-                    <label for="p_nombre">Nombre</label>
-                </div>
-                <div class="mostrar_apellido">
-                    <input type="checkbox" checked name="apellido" id="p_apellido">
-                    <label for="p_apellido">Apellido</label>
-                </div>
-                <div class="mostrar_edad">
-                    <input type="checkbox" checked name="edad" id="p_edad">
-                    <label for="p_edad">Edad</label>
-                </div>
-                <div class="mostrar_alterego">
-                    <input type="checkbox" checked name="alterego" id="p_alterego">
-                    <label for="p_alterego">AlterEgo</label>
-                </div>
-                <div class="mostrar_ciudad">
-                    <input type="checkbox" checked name="ciudad" id="p_ciudad">
-                    <label for="p_ciudad">Ciudad</label>
-                </div>
-                <div class="mostrar_publicado">
-                    <input type="checkbox" checked name="publicado" id="p_publicado">
-                    <label for="p_publicado">Publicado</label>
-                </div>
-                <div class="mostrar_enemigo">
-                    <input type="checkbox" checked name="enemigo" id="p_enemigo">
-                    <label for="p_enemigo">Enemigo</label>
-                </div>
-                <div class="mostrar_robos">
-                    <input type="checkbox" checked name="robos" id="p_robos">
-                    <label for="p_robos">Robos</label>
-                </div>
-                <div class="mostrar_asesinatos">
-                    <input type="checkbox" checked name="asesinatos" id="p_asesinatos">
-                    <label for="p_asesinatos">Asesinatos</label>
-                </div>
-            </div>
-        </section>
-        <table name="tabla">
-            <thead>
-                <tr id="filter_handler">
-                    <th class="h_id">ID</th>
-                    <th class="h_nombre">Nombre</th>
-                    <th class="h_apellido">Apellido</th>
-                    <th class="h_edad">Edad</th>
-                    <th class="h_alterego">AlterEgo</th>
-                    <th class="h_ciudad">Ciudad</th>
-                    <th class="h_publicado">Publicado</th>
-                    <th class="h_enemigo">Enemigo</th>
-                    <th class="h_robos">Robos</th>
-                    <th class="h_asesinatos">Asesinatos</th>
-                </tr>
-            </thead>
-            <tbody id="tr_body">
-            </tbody>
-        </table>
-    
-    <button value="agregar" class="btn" id="btn_agregar">Agregar</button>
-    </section>
-    <section name="form_ABM" class="form_ABM hidden" id="form_ABM">
-        <div>
-            <h1>Formulario ABM</h1>
-            <div class="group">
-                <label for="abm_id">ID: </label>
-                <input type="text" name="abm_id" id="abm_id">
-            </div>
-            <div class="group">
-                <label for="abm_nombre">Nombre: </label>
-                <input type="text" name="abm_nombre" id="abm_nombre">
-            </div>
-            <div class="group">
-                <label for="abm_apellido">Apellido: </label>
-                <input type="text" name="abm_apellido" id="abm_apellido">
-            </div>
-            <div class="group">
-                <label for="abm_edad">Edad: </label>
-                <input type="text" name="abm_edad" id="abm_edad">
-            </div>
-            <div class="group">
-                <label for="abm_tipo">Tipo: </label>
-                <select name="abm_tipo" id="abm_tipo">
-                    <option value="heroe" selected>Heroe</option>
-                    <option value="villano">Villano</option>
+    <div class="container">
+        <div name="form_datos" class="form" id="form_datos">
+            <h1>Form Datos</h1>
+            <div class="filtrado">
+                <label for="filtro">Filtrar por:</label>
+                <select name="filtro" id="filtro">
+                    <option value="todos" selected>Todos</option>
+                    <option value="heroe">Heroe</option>
+                    <option value="villano">Villano</option>            
                 </select>
             </div>
-            <div class="heroe" id="heroe_group">
-                <div class="group">
-                    <label for="abm_alterego">AlterEgo: </label>
-                    <input type="text" name="abm_alterego" id="abm_alterego">
+            <div class="promedio_edad">
+                <label for="txt_edadProm">Calcular edad promedio:</label>
+                <input type="number" readonly name="txt_edadProm" id="txt_edadProm">
+                <button value="Calcular" class="boton btn_calcular" id="btn_calcular">Calcular</button>
+            </div>
+            <h2>Mostrar columnas</h2>
+            <div class="mostrar_cols">
+                <div class="group">                
+                    <input type="checkbox" class="chbx" checked name="h_id" id="chb_id">
+                    <label for="chb_id">ID</label>
                 </div>
                 <div class="group">
-                    <label for="abm_ciudad">Ciudad: </label>
-                    <input type="text" name="abm_ciudad" id="abm_ciudad">
+                <input type="checkbox" class="chbx" checked name="h_nombre" id="chb_nombre"> 
+                <label for="chb_nombre">Nombre</label>
                 </div>
                 <div class="group">
-                    <label for="abm_publicado">Publicado: </label>
-                    <input type="text" name="abm_publicado" id="abm_publicado">
+                    <input type="checkbox" class="chbx" checked name="h_apellido" id="chb_apellido">
+                    <label for="chb_apellido">Apellido</label>  
+                </div>     
+                <div class="group">             
+                    <input type="checkbox" class="chbx" checked name="h_edad" id="chb_edad">
+                    <label for="chb_edad">Edad</label>  
+                </div>
+                <div class="group"></div>
+                <input type="checkbox" class="chbx" checked name="h_alterego" id="chb_alterego">
+                <label for="chb_alterego">AlterEgo</label>     
+                <div class="group">               
+                    <input type="checkbox" class="chbx" checked name="h_ciudad" id="chb_ciudad">
+                    <label for="chb_ciudad">Ciudad</label>  
+                </div>       
+                <div class="group">             
+                    <input type="checkbox" class="chbx" checked name="h_publicado" id="chb_publicado">
+                    <label for="chb_publicado">Publicado</label> 
+                </div>    
+                <div class="group">               
+                    <input type="checkbox" class="chbx" checked name="h_enemigo" id="chb_enemigo">
+                    <label for="chb_enemigo">Enemigo</label>
+                </div>   
+                <div class="group">                 
+                    <input type="checkbox" class="chbx" checked name="h_robos" id="chb_robos">
+                    <label for="chb_robos">Robos</label>
+                </div>   
+                <div class="group">                 
+                    <input type="checkbox" class="chbx" checked name="h_asesinatos" id="chb_asesinatos">
+                    <label for="chb_asesinatos">Asesinatos</label> 
+                </div>               
+            </div>
+            <table name="tabla">
+                <thead>
+                    <tr id="filter_handler">
+                        <th class="h_id">ID</th>
+                        <th class="h_nombre">Nombre</th>
+                        <th class="h_apellido">Apellido</th>
+                        <th class="h_edad">Edad</th>
+                        <th class="h_alterego">AlterEgo</th>
+                        <th class="h_ciudad">Ciudad</th>
+                        <th class="h_publicado">Publicado</th>
+                        <th class="h_enemigo">Enemigo</th>
+                        <th class="h_robos">Robos</th>
+                        <th class="h_asesinatos">Asesinatos</th>
+                    </tr>
+                </thead>
+                <tbody id="tr_body">
+                </tbody>
+            </table>
+        
+        <button value="agregar" class="boton cambioFrm" id="btn_agregar">Agregar</button>
+        </div>
+        <div name="form_ABM" class="form hidden" id="form_ABM">
+            <div>
+                <h1>Formulario ABM</h1>
+                <div class="group">
+                    <label for="abm_id">ID: </label>
+                    <input type="text" readonly name="abm_id" id="abm_id">
+                </div>
+                <div class="group">
+                    <label for="abm_nombre">Nombre: </label>
+                    <input type="text" name="abm_nombre" id="abm_nombre">
+                </div>
+                <div class="group">
+                    <label for="abm_apellido">Apellido: </label>
+                    <input type="text" name="abm_apellido" id="abm_apellido">
+                </div>
+                <div class="group">
+                    <label for="abm_edad">Edad: </label>
+                    <input type="text" name="abm_edad" id="abm_edad">
+                </div>
+                <div class="group">
+                    <label for="abm_tipo">Tipo: </label>
+                    <select name="abm_tipo" id="abm_tipo">
+                        <option value="Heroe" selected>Heroe</option>
+                        <option value="Villano">Villano</option>
+                    </select>
+                </div>
+                <div class="heroe" id="heroe_group">
+                    <div class="group">
+                        <label for="abm_alterego">AlterEgo: </label>
+                        <input type="text" name="abm_alterego" id="abm_alterego">
+                    </div>
+                    <div class="group">
+                        <label for="abm_ciudad">Ciudad: </label>
+                        <input type="text" name="abm_ciudad" id="abm_ciudad">
+                    </div>
+                    <div class="group">
+                        <label for="abm_publicado">Publicado: </label>
+                        <input type="text" name="abm_publicado" id="abm_publicado">
+                    </div>
+                </div>
+                <div class="villano hidden" id="villano_group">
+                    <div class="group">
+                        <label for="abm_enemigo">Enemigo: </label>
+                        <input type="text" name="abm_enemigo" id="abm_enemigo">
+                    </div>
+                    <div class="group">
+                        <label for="abm_robos">Robos: </label>
+                        <input type="text" name="abm_robos" id="abm_robos">
+                    </div>
+                    <div class="group">
+                        <label for="abm_asesinatos">Asesinatos: </label>
+                        <input type="text" name="abm_asesinatos" id="abm_asesinatos">
+                    </div>
                 </div>
             </div>
-            <div class="villano hidden" id="villano_group">
-                <div class="group">
-                    <label for="abm_enemigo">Enemigo: </label>
-                    <input type="text" name="abm_enemigo" id="abm_enemigo">
-                </div>
-                <div class="group">
-                    <label for="abm_robos">Robos: </label>
-                    <input type="text" name="abm_robos" id="abm_robos">
-                </div>
-                <div class="group">
-                    <label for="abm_asesinatos">Asesinatos: </label>
-                    <input type="text" name="abm_asesinatos" id="abm_asesinatos">
-                </div>
+            <div class="group btn_group">
+                <button value="alta" class="boton" id="alta_btn">Alta</button>
+                <button value="mod" class="boton" id="mod_btn">Modificar</button>            
+                <button value="baja" class="boton" id="baja_btn">Eliminar</button>        
+                <button value="can" class="boton cambioFrm" id="can_btn">Cancelar</button>        
             </div>
         </div>
-        <div class="group btn_group">
-            <button value="alta" class="button" id="alta_btn">Alta</button>
-            <button value="mod" class="button" id="mod_btn">Modificar</button>            
-            <button value="baja" class="button" id="baja_btn">Eliminar</button>        
-            <button value="can" class="button" id="can_btn">Cancelar</button>        
-        </div>
-    </section>
+    </div>
 
     <script type="text/javascript">
 
-        const form_datos = document.getElementById("form_datos");
-        const form_abm = document.getElementById("form_ABM");
         const abm_id = document.getElementById("abm_id");
         const abm_nombre = document.getElementById("abm_nombre");
         const abm_apellido = document.getElementById("abm_apellido");
@@ -213,39 +329,29 @@
 
         const filter = document.getElementById('filtro');
         const tr_body = document.getElementById("tr_body");
-        const p_id = document.getElementById("p_id");
-        const p_nombre = document.getElementById("p_nombre");
-        const p_apellido = document.getElementById("p_apellido");
-        const p_edad = document.getElementById("p_edad");
-        const p_alterego = document.getElementById("p_alterego");
-        const p_ciudad = document.getElementById("p_ciudad");
-        const p_publicado = document.getElementById("p_publicado");
-        const p_enemigo = document.getElementById("p_enemigo");
-        const p_robos = document.getElementById("p_robos");
-        const p_asesinatos = document.getElementById("p_asesinatos");
 
-        const h_id = document.querySelector('.h_id');
-        const h_nombre = document.querySelector('.h_nombre');
-        const h_apellido = document.querySelector('.h_apellido');
-        const h_edad = document.querySelector('.h_edad');
-        const h_alterego = document.querySelector('.h_alterego');
-        const h_ciudad = document.querySelector('.h_ciudad');
-        const h_publicado = document.querySelector('.h_publicado');
-        const h_enemigo = document.querySelector('.h_enemigo');
-        const h_robos = document.querySelector('.h_robos');
-        const h_asesinatos = document.querySelector('.h_asesinatos');
+        const btn_baja=document.getElementById("baja_btn");
+        const btn_alta=document.getElementById("alta_btn");
+        const btn_mod=document.getElementById("mod_btn");
 
-        const btn_agregar = document.getElementById("btn_agregar");
-        const can_btn = document.getElementById("can_btn");
-
+        const encabezados = document.querySelectorAll('tr>th');
+        
+        //cargar data y tabla
         const getData = () => {
+            let flagFirst = true;
             for (let persona of JSON.parse(initialData)) {
                 if (persona.hasOwnProperty("id") && persona.hasOwnProperty("nombre")
                     && persona.hasOwnProperty("apellido") && persona.hasOwnProperty("edad")) {
-                    if (persona.hasOwnProperty("alterego")) {
+                    if(flagFirst){
+                        idMax=persona.id;
+                        flagFirst=false;
+                    }else{
+                        idMax = idMax < persona.id ? persona.id : idMax; 
+                    }
+                    if (persona.hasOwnProperty("alterego") && persona.hasOwnProperty("ciudad") && persona.hasOwnProperty("publicado")) {
                         let heroe = new Heroe(persona.id, persona.nombre, persona.apellido, persona.edad, persona.alterego, persona.ciudad, persona.publicado);
                         personas.push(heroe);
-                    } else if (persona.hasOwnProperty("enemigo")) {
+                    } else if (persona.hasOwnProperty("enemigo") && persona.hasOwnProperty("robos") && persona.hasOwnProperty("asesinatos")) {
                         let villano = new Villano(persona.id, persona.nombre, persona.apellido, persona.edad, persona.enemigo, persona.robos, persona.asesinatos);
                         personas.push(villano);
                     }
@@ -253,24 +359,29 @@
             }
         }
 
+        
         const loadTableData = (persona) => {
                 tr_body.innerHTML += `
-                <tr>
-                    ${p_id.checked ? `<td class="h_id">${persona.id}</td>` : ''}
-                    ${p_nombre.checked ? `<td>${persona.nombre}</td>` : ''}
-                    ${p_apellido.checked ? `<td>${persona.apellido}</td>` : ''}
-                    ${p_edad.checked ? `<td>${persona.edad}</td>` : ''}
-                    ${p_alterego.checked ? `<td>${persona.alterego ? persona.alterego : '-'}</td>` : ''}
-                    ${p_ciudad.checked ? `<td>${persona.ciudad ? persona.ciudad : '-'}</td>` : ''}
-                    ${p_publicado.checked ? `<td>${persona.publicado ? persona.publicado : '-'}</td>` : ''}
-                    ${p_enemigo.checked ? `<td>${persona.enemigo ? persona.enemigo : '-'}</td>` : ''}
-                    ${p_robos.checked ? `<td>${persona.robos ? persona.robos : '-'}</td>` : ''}
-                    ${p_asesinatos.checked ? `<td>${persona.asesinatos ? persona.asesinatos : '-'}</td>` : ''}
+                <tr id="${persona.id}" class="fila">
+                    ${document.getElementById("chb_id").checked ? `<td>${persona.id}</td>` : ''}
+                    ${document.getElementById("chb_nombre").checked ? `<td>${persona.nombre}</td>` : ''}
+                    ${document.getElementById("chb_apellido").checked ? `<td>${persona.apellido}</td>` : ''}
+                    ${document.getElementById("chb_edad").checked ? `<td>${persona.edad}</td>` : ''}
+                    ${document.getElementById("chb_alterego").checked ? `<td>${persona.alterego ? persona.alterego : '-'}</td>` : ''}
+                    ${document.getElementById("chb_ciudad").checked ? `<td>${persona.ciudad ? persona.ciudad : '-'}</td>` : ''}
+                    ${document.getElementById("chb_publicado").checked ? `<td>${persona.publicado ? persona.publicado : '-'}</td>` : ''}
+                    ${document.getElementById("chb_enemigo").checked ? `<td>${persona.enemigo ? persona.enemigo : '-'}</td>` : ''}
+                    ${document.getElementById("chb_robos").checked ? `<td>${persona.robos ? persona.robos : '-'}</td>` : ''}
+                    ${document.getElementById("chb_asesinatos").checked ? `<td>${persona.asesinatos ? persona.asesinatos : '-'}</td>` : ''}
                 </tr>
             `;
+            sumEdad+=persona.edad;
+            cantPers++;
         }
 
         const personasMap = (filter) => {
+            sumEdad=0;
+            cantPers=0;
             tr_body.innerHTML = '';
             personas.map(value => {
                 switch (filter) {
@@ -285,6 +396,13 @@
                         break;
                 }
             });
+            filas = document.querySelectorAll('.fila');
+            filas.forEach(fila => {
+                fila.addEventListener('dblclick', (e) =>{
+                    cambiarForm();
+                    setearABMConID(fila.id);
+                });
+            });        
         }
 
         window.onload = () => {
@@ -292,116 +410,191 @@
             personasMap(filter.value);
         };
 
+        //filtro
         filter.addEventListener('change', () => {
             personasMap(filter.value);
         });
 
-        abm_tipo.addEventListener("change", () => {
+        //sort
+        encabezados.forEach((value,key) => {
+            value.addEventListener('click', (e) => {
+                personas.sort((a, b)=>{
+                    let paramA=[a.id,a.nombre,a.apellido,a.edad,a.alterego,a.ciudad,a.publicado,a.enemigo,a.robos,a.asesinatos];
+                    let paramB=[b.id,b.nombre,b.apellido,b.edad,b.alterego,b.ciudad,b.publicado,b.enemigo,b.robos,b.asesinatos];
+                    if(paramA[key]){
+                        if (paramA[key] > paramB[key]) {
+                            return 1;
+                        } 
+                        else if (paramA[key] == paramB[key]) { 
+                            return 0;
+                        } 
+                        else {
+                            return -1;
+                        }
+                    }
+                });
+            });
+        });
+
+        //calcular promedio
+        document.getElementById("btn_calcular").addEventListener("click", (e) => {
+            document.getElementById("txt_edadProm").value=Math.trunc(sumEdad/cantPers);
+        });
+
+        //checkboxes
+        function esconderCol(checkbox)
+        {
+            col = document.querySelector('th.'+checkbox.name);
+            checkbox.checked ? col.style.removeProperty("display") : col.style.display = 'none';
+            personasMap(filter.value);
+        }
+
+        let checkboxes = document.querySelectorAll('input.chbx');
+        checkboxes.forEach(item => { addEventListener('click', (e) => {
+            esconderCol(item);
+        })});
+       
+        //cambio de form
+        function cambiarForm(){
+            let listForms = document.querySelectorAll(".form");
+            listForms.forEach(item => {
+                item.classList.toggle("hidden");
+            });
+        }
+
+        //ABM
+        function cambiarAbmTipo(){
             const heroe = document.querySelector(".heroe");
             const villano = document.querySelector(".villano");
             heroe.classList.toggle("hidden");
             villano.classList.toggle("hidden");
+        }
+
+        abm_tipo.addEventListener("change", () => {
+            cambiarAbmTipo(); 
         });
 
-        p_id.addEventListener('click', (e) => {
-            if (p_id.checked) {
-                h_id.style.removeProperty("display");
-                personasMap(filter.value);
-            } else {
-                h_id.style.display = 'none';
-                personasMap(filter.value);
+        function setearABM(){
+            abm_id.value = idMax+1;
+            abm_nombre.value = "";
+            abm_apellido.value = "";
+            abm_edad.value = "";
+            abm_alterego.value = "";
+            abm_ciudad.value = "";
+            abm_publicado.value = "";
+            abm_enemigo.value = "";
+            abm_robos.value = "";
+            abm_asesinatos.value = "";
+            btn_baja.disabled=true;
+            btn_mod.disabled=true;
+            btn_alta.disabled=false;
+        }
+
+        function setearABMConID(id){
+            let persona = personas.find(p=>p.id == id);
+            abm_id.value = persona.id;
+            abm_nombre.value = persona.nombre;
+            abm_apellido.value = persona.apellido;
+            abm_edad.value = persona.edad;
+            abm_alterego.value = persona.alterego ? persona.alterego : "";
+            abm_ciudad.value = persona.ciudad ? persona.ciudad : "";
+            abm_publicado.value = persona.publicado ? persona.publicado : "";
+            abm_enemigo.value = persona.enemigo ? persona.enemigo : "";
+            abm_robos.value = persona.robos ? persona.robos : "";
+            abm_asesinatos.value = persona.asesinatos ? persona.asesinatos : "";
+            if(persona.hasOwnProperty("enemigo") && abm_tipo.value == "Heroe")
+            {
+                cambiarAbmTipo();
+                abm_tipo.value="Villano";
             }
-        });
-        p_nombre.addEventListener('click', (e) => {
-            if (p_nombre.checked) {
-                h_nombre.style.removeProperty("display");
-                personasMap(filter.value);
-            } else {
-                h_nombre.style.display = 'none';
-                personasMap(filter.value);
+            if(persona.hasOwnProperty("alterego") && abm_tipo.value =="Villano"){
+                cambiarAbmTipo();
+                abm_tipo.value="Heroe";
             }
-        });
-        p_apellido.addEventListener('click', (e) => {
-            if (p_apellido.checked) {
-                h_apellido.style.removeProperty("display");
-                personasMap(filter.value);
-            } else {
-                h_apellido.style.display = 'none';
-                personasMap(filter.value);
-            }
-        });
-        p_edad.addEventListener('click', (e) => {
-            if (p_edad.checked) {
-                h_edad.style.removeProperty("display");
-                personasMap(filter.value);
-            } else {
-                h_edad.style.display = 'none';
-                personasMap(filter.value);
-            }
-        });
-        p_alterego.addEventListener('click', (e) => {
-            if (p_alterego.checked) {
-                h_alterego.style.removeProperty("display");
-                personasMap(filter.value);
-            } else {
-                h_alterego.style.display = 'none';
-                personasMap(filter.value);
-            }
-        });
-        p_ciudad.addEventListener('click', (e) => {
-            if (p_ciudad.checked) {
-                h_ciudad.style.removeProperty("display");
-                personasMap(filter.value);
-            } else {
-                h_ciudad.style.display = 'none';
-                personasMap(filter.value);
-            }
-        });
-        p_publicado.addEventListener('click', (e) => {
-            if (p_publicado.checked) {
-                h_publicado.style.removeProperty("display");
-                personasMap(filter.value);
-            } else {
-                h_publicado.style.display = 'none';
-                personasMap(filter.value);
-            }
-        });
-        p_enemigo.addEventListener('click', (e) => {
-            if (p_enemigo.checked) {
-                h_enemigo.style.removeProperty("display");
-                personasMap(filter.value);
-            } else {
-                h_enemigo.style.display = 'none';
-                personasMap(filter.value);
-            }
-        });
-        p_robos.addEventListener('click', (e) => {
-            if (p_robos.checked) {
-                h_robos.style.removeProperty("display");
-                personasMap(filter.value);
-            } else {
-                h_robos.style.display = 'none';
-                personasMap(filter.value);
-            }
-        });
-        p_asesinatos.addEventListener('click', (e) => {
-            if (p_asesinatos.checked) {
-                h_asesinatos.style.removeProperty("display");
-                personasMap(filter.value);
-            } else {
-                h_asesinatos.style.display = 'none';
-                personasMap(filter.value);
-            }
+            btn_baja.disabled=false;
+            btn_mod.disabled=false;
+            btn_alta.disabled=true;
+        }
+
+        //botones ABM
+        document.getElementById("btn_agregar").addEventListener("click", (e) => {
+            setearABM();
+            cambiarForm();
         });
 
-        btn_agregar.addEventListener("click", (e) => {
-            form_datos.style.display = 'none';
-            form_abm.style.display = 'block';
+        document.getElementById("can_btn").addEventListener("click", (e) => {
+            cambiarForm();
+            setearABM();
         });
-        can_btn.addEventListener("click", (e) => {
-            form_datos.style.display = 'block';
-            form_abm.style.display = 'none';
+
+       btn_alta.addEventListener("click", (e) => {
+            let pers;
+            switch (abm_tipo.value) {
+                case 'Heroe':
+                pers = new Heroe (
+                    abm_id.value, abm_nombre.value, abm_apellido.value, abm_edad.value,
+                    abm_alterego.value, abm_ciudad.value, abm_publicado.value);
+                break;
+            case 'Villano':
+                pers = new Villano (
+                    abm_id.value, abm_nombre.value, abm_apellido.value, abm_edad.value,
+                    abm_enemigo.value, abm_robos.value, abm_asesinatos.value);
+                break;
+            }
+            personas.push(pers);
+            idMax++;
+            setearABM();
+            personasMap(filter.value);
+            cambiarForm();
         });
+
+        btn_mod.addEventListener("click", (e) => {
+            switch (abm_tipo.value) {
+                case 'Heroe':
+                personas.filter((value, index) => {
+                    if (value.id === parseInt(abm_id.value)) {
+                        personas[index] = {
+                            id: abm_id.value ? abm_id.value : personas[index].id,
+                            nombre: abm_nombre.value ? abm_nombre.value : personas[index].nombre,
+                            apellido: abm_apellido.value ? abm_apellido.value : personas[index].apellido,
+                            edad: abm_edad.value ? abm_edad.value : personas[index].edad,
+                            alterego: abm_alterego.value ? abm_alterego.value : personas[index].alterego,
+                            ciudad: abm_ciudad.value ? abm_ciudad.value : personas[index].ciudad,
+                            publicado: abm_publicado.value ? abm_publicado.value : personas[index].publicado
+                        };
+                    }
+                });
+                break;
+                case 'Villano':
+                personas.filter((value, index) => {
+                    if (value.id === parseInt(abm_id.value)) {
+                        personas[index] = {
+                            id: abm_id.value ? abm_id.value : personas[index].id,
+                            nombre: abm_nombre.value ? abm_nombre.value : personas[index].nombre,
+                            apellido: abm_apellido.value ? abm_apellido.value : personas[index].apellido,
+                            edad: abm_edad.value ? abm_edad.value : personas[index].edad,
+                            enemigo: abm_enemigo.value ? abm_enemigo.value : personas[index].enemigo,
+                            robos: abm_robos.value ? abm_robos.value : personas[index].robos,
+                            asesinatos: abm_asesinatos.value ? abm_asesinatos.value : personas[index].asesinatos
+                        };
+                    }
+                });
+                break;
+            }
+            setearABM();
+            personasMap(filter.value);
+            cambiarForm();
+        });
+
+        btn_baja.addEventListener("click", (e) => {
+            personas = personas.filter((value)=>{
+                return parseInt(value.id) !== parseInt(abm_id.value);
+            });
+            setearABM();
+            personasMap(filter.value);
+            cambiarForm();
+        })
+
     </script>
 </body>
 </html>
